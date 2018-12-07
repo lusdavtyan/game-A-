@@ -1,0 +1,575 @@
+
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Surviving AUA</title>
+	</head>
+	<body onload="done()">
+		
+		<div id="scoreDiv">
+
+			<span id="score">0</span>
+			 
+			<img src="https://www.byui.edu/Images/admissions%20images/icons/concurrent%20enrollment%20icons-03.png" id="cn">
+		</div>
+		<div class="gameHome" id="startPage">
+			<div id="gameTitle">Surviving AUA</div>
+			<button onclick="ld()" id="startButton"><span style="font-size:20px">Loading Assets<br>Loading...</span></button><br>
+			<div id="a"><div id="loading"></div></div>
+			<div id = "intro"><p><b>Use left/right arrow key to collect A's and avoid F's<b></p></div>
+			<style>
+				
+			
+
+			body{
+				margin:0;
+				height:100vh;
+				width:100vw;
+			}
+			
+			#mainContainer {
+				position:absolute;
+				top:0;
+				left:0;
+				transform-origin:0% 0%;
+				width:100%;
+				transform:  translateX(0px) rotate(0deg);
+				overflow: hidden;
+			}
+			
+			#intro {
+				font-size: 100px
+}
+			#city {
+				position:absolute;
+				top:0;
+				left:0;
+				height:30vw;
+				width:100%;
+				z-index:-1;
+				display: block;
+			}
+			
+			#myCanvas {
+				background:transparent;
+				z-index: 100;
+			}
+			
+			.aImg {
+				display:none;
+			}
+			
+			#mainContainer {
+				display:none;
+			}
+			
+			#scoreDiv {
+				position:absolute;
+				right:0;
+				background:transparent;
+				display:inline-block;
+				border:1px solid black;
+				padding:10px 100px 5px 10px;
+				border-radius:0px;
+				font-weight:1000;
+				font-size:25px;
+				height:30px;
+				margin:10px;
+				z-index:500;
+				transform-origin:100% 0%;
+			}
+			
+			#cn {
+				height:50px;
+				width:50px;
+				background:black;
+				position:absolute;
+				right:-10px;
+				top:-10px;
+				border-radius:50%;
+			}
+			
+			.gameHome {
+				position:absolute;
+				top:0;
+				left:0;
+				background:white;
+				height:100vh;
+				width:100vw;
+				transform-origin:0% 0%;
+				text-align:center;
+			}
+			
+			#gameTitle {
+				text-align:center;
+				font-family:serif;
+				font-size:100px;
+				margin-top:100px;
+				font-weight:1000;
+				color: blue
+			}
+			
+			#startButton {
+				font-size:50px;
+				display:inline-block;
+				background:#1fa456;
+				color:white;
+				padding:10px 25px;
+				margin-top: 50px;
+				border:none;
+				border-radius:50px;
+				box-shadow:5px 5px #000;
+				outline:none;
+			}
+			
+			#gameConf {
+				width:50%;
+				height:100%;
+				background:red;
+			}
+			
+			#gameDifficulty {
+				width:100%;
+				height:50%;
+				background:blue;
+				padding:0;
+				margin:0;
+			}
+			
+			.diffOpt {
+				background:green
+				font-family:cursive;
+				font-size:20px;
+				text-align:center;
+			}
+			
+			#loading {
+				height:60px;
+				width:60px;
+				background:transparent;
+				display:inline-block;
+				border:10px solid transparent;
+				border-bottom-color:red;
+				border-left-color:red;
+				border-radius:50%;
+				animation:ld 1s linear infinite;
+			}
+			
+			@keyframes ld {
+				0% {
+					transform:translateY(-165px) rotate(0deg);
+				}
+				100% {
+					transform:translateY(-165px) rotate(360deg);
+				}
+			}
+			</style>
+
+
+			
+		</div>
+		
+		
+		<div id="mainContainer" style="background:black" >
+			<img id="city" src="http://aua.am/wp-content/uploads/2012/02/IMAG0648.jpg">
+			<canvas id="myCanvas"></canvas>
+		</div>
+		<img class="aImg" id="t1" src="https://data2.polantis.com/image1000/data/562/16258/Cherry%20Tree%20in%20Bloom_3D.png">
+		<img class="aImg" id="t2" src="https://png2.kisspng.com/20171209/6d7/5a2c0f3d38eae3.9167593215128369252331.png">
+		<img class="aImg" id="t3" src="https://clipart.info/images/ccovers/1495919167red-tree-png--image.png">
+		<img class="aImg" id="t4" src="https://pngimage.net/wp-content/uploads/2018/06/purple-tree-png-3.png">
+		<img class="aImg" id="c1" src="http://origin.lcv.org/wp-content/uploads/2018/01/f-grade.png">
+		<img class="aImg" id="char" <img src="C:\Users\Asus\Desktop\New folder\bbr.png">
+		<script>
+				   
+		let loaded = false;
+		
+		function done(){
+			document.getElementById("a").innerHTML="";
+			document.getElementById("startButton").innerHTML = "Start";
+			loaded = true;
+		}
+		
+		(function(){
+			let w = window.innerWidth || 360;
+			let h = window.innerHeight || 560;
+		
+			if(h > w){
+				let nh = h;
+				h = w;
+				w = nh;
+				document.getElementById("mainContainer").style.transform = "translateX("+(h)+"px) rotate(90deg)";
+			}
+			document.getElementById("mainContainer").style.width = w+"px";
+			document.getElementById("mainContainer").style.height = h+"px";
+			
+			document.getElementById("city").style.height = h*.3+"px";
+			document.getElementById("city").style.width = w+"px";
+			
+			let c = document.getElementById("myCanvas");
+			c.height = h;
+			c.width = w;
+			
+			let ctx = c.getContext("2d");
+		
+		function loadGame(){
+			"use strict";
+			
+			let roadWidth = 5*w/36;
+			let roadTop = h-h*0.7;
+			let roadLeft = (w-roadWidth)/2;
+			let roadConstant = roadLeft/(h-roadTop);
+			let score = 0;
+			let scoreC = document.getElementById("score");
+			function updateScore(ds){
+				score+=ds;
+				scoreC.textContent = score;
+			}
+			updateScore(0);
+			
+			let rso = [];
+			let ratio = 0.8;
+			let totalRso = 20;
+			let maxHF = h*(1-ratio)/(2.25*(1-Math.pow(ratio,totalRso)));
+			let maxH = maxHF;
+			let totalHeight = 0.7*h;
+			let minWidth = 1;
+			let maxWidth = 26;
+			let dif = maxWidth - minWidth;
+			let changedHeight = totalHeight-maxH*ratio;
+			let cnst1 = Math.pow(ratio,totalRso)/(1-ratio);
+			let stp = h-totalHeight;
+			let tMaxH = h*20/36;
+			let treeCnst = tMaxH/roadLeft;
+			
+			let gameDifficulty = 100;
+			
+			
+			
+			function TreeBuilder(src,src2,start,left){
+				this.src = treeSrc[src];
+				this.src2 = treeSrc[src2];
+				this.y = start;
+				this.x = 0;
+				this.h = 0;
+				this.w = 0;
+				this.dy = 0.01;
+				this.r = 1.009;
+				this.left = left;
+			}
+			
+			TreeBuilder.prototype.draw = function(){
+				this.y += this.dy;
+				this.dy *= this.r;
+				this.x = (h-this.y)*roadConstant - this.w - this.w*this.left;
+				this.h = (roadLeft-this.x-this.w*this.left)*treeCnst;
+				this.w = this.h*2/3;
+				
+				ctx.drawImage(this.src,this.x,this.y-this.h,this.w,this.h);
+				ctx.drawImage(this.src2,w-this.x-this.w,this.y-this.h,this.w,this.h);
+			
+				if(this.y >= h){
+					this.y = stp;
+					this.h = 0;
+					this.w = 0;
+					this.left = Math.random()*3;
+					this.dy = 0.5;
+				}
+			}
+			
+			function _i(x){
+				return document.getElementById(x);
+			}
+			let treeSrc = [_i("t1"),_i("t2"),_i("t3"),_i("t4")];
+			
+			let trees = [];
+			for(let n = 0; n < ((h*0.7)/50-2); n++){
+				trees.push(new TreeBuilder(Math.floor(Math.random()*4),Math.floor(Math.random()*4),stp+n*50,2));
+			}
+			
+			
+			let carWCnst = roadLeft*2/totalHeight;
+			let carW = (w > 560) ? 120 : 90;
+			let carH = carW*2/3;
+			
+			function treeBuilder(src,start,lane){
+				this.src = carSrc[src];
+				this.y = start;
+				this.x = 0;
+				this.h = 0;
+				this.w = 0;
+				this.dy = 0.5;
+				this.lane = lane;
+			}
+			
+			treeBuilder.prototype.draw = function(){
+				this.dy *= 1.01;
+				this.y += this.dy;
+				this.x = (carWCnst/2)*(h-this.y)+(w-(carWCnst*(h-this.y)))*this.lane/8;
+				this.w = carW-carW*carWCnst*(h-this.y)/w;
+				this.h = 1.7*this.w/3;
+				
+				ctx.drawImage(this.src,this.x,this.y-this.h,this.w,this.h);
+				if(this.y >= h-20){
+					if(Math.abs(this.x-cx) <= carH && Math.abs(this.y-h+carH) <= carH){
+						clearInterval(intv);
+						setTimeout(function(){
+							document.getElementById("mainContainer").style.display = "none";
+							document.getElementById("startPage").style.display = "block";
+						},1000);
+					}
+				}
+				if(this.y >= h+100){
+					this.y = stp;
+					this.h = 0;
+					this.w = 0;
+					this.left = Math.random()*3;
+					this.dy = 0.5;
+					this.lane = 1+Math.random()*5;
+				}
+			}
+			
+			let carSrc = [_i("c1"),_i("c1"),_i("c1")];
+			
+			let cars = [];
+			for(let n = 0; n < ((h*0.7+100)/gameDifficulty); n++){
+				cars.push(new treeBuilder(Math.floor(Math.random()*3),stp+n*gameDifficulty,1));
+			}
+			
+			//Coin.....
+			let coinW = (w > 560) ? 100 : 60;
+			function CoinBuilder(start,lane){
+				this.src = coinSrc;
+				this.y = start;
+				this.x = 0;
+				this.h = 0;
+				this.w = 0;
+				this.dy = 0.5;
+				this.lane = lane;
+			}
+			
+			CoinBuilder.prototype.draw = function(){
+				this.dy *= 1.01;
+				this.y += this.dy;
+				this.x = (carWCnst/2)*(h-this.y)+(w-(carWCnst*(h-this.y)))*this.lane/8;
+				this.w = coinW-coinW*carWCnst*(h-this.y)/w;
+				this.h = this.w;
+				
+				ctx.drawImage(this.src,this.x,this.y-this.h,this.w,this.h);
+				if(this.y >= h-20){
+					if(Math.abs(this.x-cx) <= coinW && Math.abs(this.y-h+coinW) <= coinW){
+						this.y = stp;
+						this.h = 0;
+						this.w = 0;
+						this.left = Math.random()*3;
+						this.dy = 0.5;
+						this.lane = Math.floor(1+Math.random()*5);
+						updateScore(1);
+					}
+				}
+				if(this.y >= h+100){
+					this.y = stp;
+					this.h = 0;
+					this.w = 0;
+					this.left = Math.random()*3;
+					this.dy = 0.5;
+					this.lane = Math.floor(1+Math.random()*5);
+				}
+			}
+			
+			let coinSrc = _i("cn");
+			
+			let coins = [];
+			for(let n = 0; n < ((h*0.7+100)/(gameDifficulty-50)); n++){
+				coins.push(new CoinBuilder(stp+n*(gameDifficulty-50),6));
+			}
+			
+			
+			
+		
+			
+			
+			
+			function rectPoints(n,ho){
+				n = totalRso-n-1;
+				let y1 = stp+maxH*cnst1*(Math.pow(1/ratio,n)-1);
+				let x1 = roadLeft-roadConstant*(y1-stp);
+				let y2 = y1;
+				let x2 = x1 + minWidth+(y1-stp)*dif/totalHeight;
+				let y3 = y1 + maxH*cnst1*(Math.pow(1/ratio,n+1)-1);
+				let x3 = roadLeft-roadConstant*(y3-stp);
+				let y4 = y3;
+				let x4 = x3 + minWidth+(y3-stp)*dif/totalHeight;
+				
+				return [x1,y1,x2,y2,x4,y4,x3,y3];
+			}
+			
+			
+			for(let n = 0; n < totalRso; n++){
+				rso.push(rectPoints(n,h));
+				rso[n][8] = (n%2==0) ? "#000" : "#fff";
+			}
+			
+			function draw(){
+				ctx.beginPath();
+				ctx.moveTo((w-roadWidth)/2,stp);
+				ctx.lineTo((w-roadWidth)/2+roadWidth,stp);
+				ctx.lineTo(w,h);
+				ctx.lineTo(0,h);
+				ctx.fillStyle="#696969";
+				ctx.fill();
+				ctx.closePath();
+				for(let n = 0; n < totalRso; n++){
+					ctx.beginPath();
+					ctx.moveTo(rso[n][0],rso[n][1]);
+					ctx.lineTo(rso[n][2],rso[n][3]);
+					ctx.lineTo(rso[n][4],rso[n][5]);
+					ctx.lineTo(rso[n][6],rso[n][7]);
+					ctx.lineTo(rso[n][0],rso[n][1]);
+					ctx.lineWidth = 2;
+					ctx.fillStyle = rso[n][8];//"rgb("+Math.floor(Math.random()*255)+","+Math.floor(Math.random()*255)+","+Math.floor(Math.random()*255)+")";
+					ctx.fill();
+					ctx.closePath();
+					
+					ctx.beginPath();
+					ctx.moveTo(w-rso[n][0],rso[n][1]);
+					ctx.lineTo(w-rso[n][2],rso[n][3]);
+					ctx.lineTo(w-rso[n][4],rso[n][5]);
+					ctx.lineTo(w-rso[n][6],rso[n][7]);
+					ctx.lineTo(w-rso[n][0],rso[n][1]);
+					ctx.lineWidth = 2;
+					ctx.fillStyle = rso[n][8]; //"rgb("+Math.floor(Math.random()*255)+","+Math.floor(Math.random()*255)+","+Math.floor(Math.random()*255)+")";
+					ctx.fill();
+					ctx.closePath();
+					
+					
+				}
+				
+			}
+			
+			let cx = (w-carW)/2;
+			let cl = false, cr = false;
+			let car = _i("char");
+			let ms = 3*w/560;
+			function drawCar(){
+				if(cl) if(cx+carW+50 < w) cx+=ms;
+				if(cr) if(cx-50 > 0) cx-=ms;
+				ctx.drawImage(car,cx,h-carH,carW,carH);
+			}
+			
+			
+			let m = 0;
+			let intv = setInterval(function(){
+				try{
+				ctx.clearRect(0,0,w,h);
+				maxH+=0.5;
+				changedHeight = maxH*cnst1*(Math.pow(1/ratio,totalRso-1)-1);//maxH*(1-Math.pow(ratio,totalRso-5))/(1-ratio);
+				if(changedHeight >= totalHeight){
+					maxH = maxHF;
+					m++;
+				}
+				for(let n = 0; n < totalRso; n++){
+					rso[n]=rectPoints(n,h-totalHeight+changedHeight);
+					if(m%2==0) rso[n][8] = (n%2==0) ? "#000" : "#fff";
+					else rso[n][8] = (n%2==1) ? "#000" : "#fff";
+				}
+				draw();
+				for(let n = 0; n < trees.length; n++){
+					trees[n].draw();
+				}
+				
+				for(let n = 0; n < coins.length; n++){
+					coins[n].draw();
+				}
+				
+				for(let n = 0; n < cars.length; n++){
+					cars[n].draw();
+				}
+				
+				
+				drawCar();
+				}catch(err){
+					
+				}
+				
+			},10)
+			//draw();
+			
+			//Game Control
+			
+			//Touch
+			function getTouch(e){
+				e.preventDefault();
+				let to = e.changedTouches[0];
+				let ty = parseInt(to.clientY);
+				if(ty>(h/2)){
+					cl = true;
+				}
+				else{
+					cr = true;
+				}
+			}
+			function getTouchEnd(){
+				cl = false;
+				cr = false;
+			}
+			
+			c.removeEventListener("touchstart",getTouch);
+			c.removeEventListener("touchend",getTouchEnd);
+			c.addEventListener("touchstart",getTouch);
+			c.addEventListener("touchend",getTouchEnd);
+			//Key..
+			function getKey(e){
+				e.preventDefault();
+				let ty = e.keyCode;
+				if(ty===39){
+					cr = false;
+					cl = true;
+				}
+				else if(ty===37){
+					cl = false;
+					cr = true;
+				}
+			}
+			function getKeyEnd(e){
+				let ty = e.keyCode;
+				if(ty === 39) cl = false;
+				else if(ty === 37) cr = false;
+			}
+			
+			document.body.removeEventListener("keydown",getKey);
+			document.body.removeEventListener("keyup",getKeyEnd);
+			document.body.addEventListener("keydown",getKey);
+			document.body.addEventListener("keyup",getKeyEnd);
+			//Accelarometre
+			
+			function driveCar(e){
+				let y = e.accelerationIncludingGravity.y;
+			
+				if(y > 0){
+					if(cx+carW+50 < w) cx += y*ms;
+				}
+				else{
+					if(cx-50 > 0) cx += y*ms;
+				}
+			}
+			
+			if(window.DeviceMotionEvent){
+				window.removeEventListener("devicemotion",driveCar)
+				   window.addEventListener("devicemotion",driveCar,false)
+			}
+			//End
+		}
+		ld = function(){
+			if(loaded){
+				document.getElementById("startPage").style.display = "none";
+				document.getElementById("mainContainer").style.display = "block";
+				loadGame();
+			}
+		}
+		})();
+		
+		</script>
+	</body>
+</html>
